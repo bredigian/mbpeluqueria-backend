@@ -1,0 +1,10 @@
+## Enviroment Varibles files
+.env
+.env.local
+
+## Node Modules directory
+node_modules
+
+## Compiled directories
+dist
+build
