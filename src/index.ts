@@ -1,7 +1,12 @@
 import { $connect, $disconnect } from "./services/prisma.service"
 
 import Express from "express"
+// Routes
+import ShiftsRoute from "./routes/shifts.routes"
 import UsersRoute from "./routes/users.routes"
+import WeekdaysRoute from "./routes/weekdays.routes"
+import WorkhoursRoute from "./routes/workhours.routes"
+//-----------------------------
 import { config } from "dotenv"
 import cors from "cors"
 
@@ -19,6 +24,9 @@ app.get("/", (_, res) => {
 })
 
 app.use("/users", UsersRoute)
+app.use("/shifts", ShiftsRoute)
+app.use("/weekdays", WeekdaysRoute)
+app.use("/workhours", WorkhoursRoute)
 
 process.on("SIGINT", async () => {
   await $disconnect()
