@@ -5,6 +5,7 @@ import Express from "express"
 import ShiftsRoute from "./routes/shifts.routes"
 import UsersRoute from "./routes/users.routes"
 import WeekdaysRoute from "./routes/weekdays.routes"
+import WorkhoursByWeekdayRoute from "./routes/workhours-by-weekday.routes"
 import WorkhoursRoute from "./routes/workhours.routes"
 //-----------------------------
 import { config } from "dotenv"
@@ -27,6 +28,7 @@ app.use("/users", UsersRoute)
 app.use("/shifts", ShiftsRoute)
 app.use("/weekdays", WeekdaysRoute)
 app.use("/workhours", WorkhoursRoute)
+app.use("/workhours-by-weekday", WorkhoursByWeekdayRoute)
 
 process.on("SIGINT", async () => {
   await $disconnect()
