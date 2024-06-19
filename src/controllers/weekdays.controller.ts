@@ -7,7 +7,7 @@ import { Weekday } from "@prisma/client"
 export const Controller = {
   getAll: async (_: Request, res: Response) => {
     try {
-      return res.status(200).json({ weekdays: await getAll() })
+      return res.status(200).json(await getAll())
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         return res.status(500).json({
@@ -24,7 +24,7 @@ export const Controller = {
     try {
       const payload: Weekday = req.body
 
-      return res.status(201).json({ weekday: await create(payload) })
+      return res.status(201).json(await create(payload))
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         return res.status(500).json({

@@ -7,7 +7,7 @@ import { User } from "@prisma/client"
 export const Controller = {
   getAll: async (_: Request, res: Response) => {
     try {
-      return res.status(200).json({ users: await getAll() })
+      return res.status(200).json(await getAll())
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         return res.status(500).json({
@@ -23,7 +23,7 @@ export const Controller = {
     try {
       const payload: User = req.body
 
-      return res.status(201).json({ user: await create(payload) })
+      return res.status(201).json(await create(payload))
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         return res.status(500).json({
@@ -40,7 +40,7 @@ export const Controller = {
       const payload: { id: string } = req.body
       const { id } = payload
 
-      return res.status(200).json({ user: await deleteById(id) })
+      return res.status(200).json(await deleteById(id))
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         return res.status(500).json({

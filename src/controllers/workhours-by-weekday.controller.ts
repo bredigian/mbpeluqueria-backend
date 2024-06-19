@@ -9,9 +9,7 @@ export const Controller = {
     try {
       const payload: WorkhoursByWeekday = req.body
 
-      return res
-        .status(201)
-        .json({ workhourByWeekday: await enableWorkhour(payload) })
+      return res.status(201).json(await enableWorkhour(payload))
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         return res.status(500).json({

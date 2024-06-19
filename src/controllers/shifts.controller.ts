@@ -17,7 +17,7 @@ import { workhourIsEnabled } from "../services/workhours-by-weekdays.service"
 export const Controller = {
   getAll: async (_: Request, res: Response) => {
     try {
-      return res.status(200).json({ shifts: await getAll() })
+      return res.status(200).json(await getAll())
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         return res.status(500).json({
@@ -48,7 +48,7 @@ export const Controller = {
 
       const { id } = decodeToken(token) as JwtPayload
 
-      return res.status(200).json({ shifts: await getAllByUserId(id) })
+      return res.status(200).json(await getAllByUserId(id))
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         return res.status(500).json({
@@ -99,7 +99,7 @@ export const Controller = {
           statusCode: 409,
         })
 
-      return res.status(201).json({ shift: await create(payload) })
+      return res.status(201).json(await create(payload))
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         return res.status(500).json({
