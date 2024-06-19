@@ -44,6 +44,7 @@ export const Controller = {
       return res.status(200).json({
         access_token,
         exp: 30,
+        id: user.id,
         name: user.name,
         username: user.username,
       })
@@ -75,13 +76,15 @@ export const Controller = {
           statusCode: 401,
         })
 
-      const { name, username } = decodeToken(token) as {
+      const { id, name, username } = decodeToken(token) as {
+        id: string
         name: string
         username: string
       }
 
       return res.status(200).json({
         access_token: token,
+        id,
         name,
         username,
       })
