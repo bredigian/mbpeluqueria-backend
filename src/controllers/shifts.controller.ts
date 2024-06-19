@@ -1,5 +1,12 @@
-import { Request, Response } from "express"
-import { create, getAll, isAssigned } from "../services/shifts.service"
+import {
+  Request,
+  Response,
+} from "express"
+import {
+  create,
+  getAll,
+  isAssigned,
+} from "../services/shifts.service"
 
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 import { Shift } from "@prisma/client"
@@ -11,6 +18,20 @@ export const Controller = {
   getAll: async (_: Request, res: Response) => {
     try {
       return res.status(200).json({ shifts: await getAll() })
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        return res.status(500).json({
+          name: error.name,
+          message: error.message,
+          errorCode: error.code,
+        })
+      }
+    }
+  },
+  getAllByUserId: async (req: Request, res: Response) => {
+    try {
+      const token = req.headers.authorization?.substring(0, 7)
+      console.log(token)
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         return res.status(500).json({
