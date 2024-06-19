@@ -31,8 +31,9 @@ export const Controller = {
 
       const access_token = sign(
         {
+          id: user.id,
           name: user.name,
-          username: user.name,
+          username: user.username,
           email: user.email,
           role: user.role,
         },
