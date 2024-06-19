@@ -1,4 +1,5 @@
 import { Request, Response } from "express"
+import { decodeToken, verifyToken } from "../services/auth.service"
 
 import { JWT_SECRET_KEY } from "../const/jsonwebtoken"
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
@@ -6,7 +7,6 @@ import { User } from "@prisma/client"
 import { getOne } from "../services/users.service"
 import { sign } from "jsonwebtoken"
 import { verifyPassword } from "../lib/utils"
-import { verifyToken } from "../services/auth.service"
 
 export const Controller = {
   signin: async (req: Request, res: Response) => {
@@ -41,7 +41,12 @@ export const Controller = {
         { expiresIn: "30d" }
       )
 
-      return res.status(200).json({ access_token, exp: 30 })
+      return res.status(200).json({
+        access_token,
+        exp: 30,
+        name: user.name,
+        username: user.username,
+      })
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         return res.status(500).json({
@@ -70,8 +75,15 @@ export const Controller = {
           statusCode: 401,
         })
 
+      const { name, username } = decodeToken(token) as {
+        name: string
+        username: string
+      }
+
       return res.status(200).json({
-        token,
+        access_token: token,
+        name,
+        username,
       })
     } catch (error) {
       return res.status(400).json({
