@@ -5,6 +5,7 @@ import {
   getAllByUserId,
   getAllNextShifts,
   getAllNextShiftsByUserId,
+  getOfSpecificDate,
   isAssigned,
 } from "../services/shifts.service"
 import { decodeToken, verifyToken } from "../services/auth.service"
@@ -17,9 +18,18 @@ import { getOne as getOneWorkhour } from "../services/workhours.service"
 import { workhourIsEnabled } from "../services/workhours-by-weekdays.service"
 
 export const Controller = {
-  getAll: async (_: Request, res: Response) => {
+  getAll: async (req: Request, res: Response) => {
     try {
-      return res.status(200).json(await getAll())
+      const { date } = req.query
+      if (!date) return res.status(200).json(await getAll())
+
+      const specificDate = new Date(date as string)
+      const nextDate = new Date(specificDate)
+      nextDate.setDate(specificDate.getDate() + 1)
+
+      return res
+        .status(200)
+        .json(await getOfSpecificDate(specificDate, nextDate))
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         return res.status(500).json({
@@ -30,6 +40,7 @@ export const Controller = {
       }
     }
   },
+
   getAllByUserId: async (req: Request, res: Response) => {
     try {
       const token = req.headers.authorization?.substring(7)

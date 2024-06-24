@@ -47,6 +47,7 @@ export const Controller = {
         id: user.id,
         name: user.name,
         username: user.username,
+        role: user.role,
       })
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
@@ -68,6 +69,8 @@ export const Controller = {
           statusCode: 401,
         })
 
+      console.log(token)
+
       const authorized = verifyToken(token)
       if (!authorized)
         return res.status(401).json({
@@ -76,10 +79,11 @@ export const Controller = {
           statusCode: 401,
         })
 
-      const { id, name, username } = decodeToken(token) as {
+      const { id, name, username, role } = decodeToken(token) as {
         id: string
         name: string
         username: string
+        role: string
       }
 
       return res.status(200).json({
@@ -87,6 +91,7 @@ export const Controller = {
         id,
         name,
         username,
+        role,
       })
     } catch (error) {
       return res.status(400).json({

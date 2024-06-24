@@ -19,6 +19,25 @@ export const getAll = async () =>
     },
   })
 
+export const getOfSpecificDate = async (specificDate: Date, nextDate: Date) =>
+  await prisma.shift.findMany({
+    where: { timestamp: { gte: specificDate, lt: nextDate } },
+    select: {
+      id: true,
+      timestamp: true,
+      user_id: false,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          username: true,
+          role: true,
+        },
+      },
+    },
+  })
+
 export const getAllNextShifts = async () =>
   await prisma.shift.findMany({ where: { timestamp: { gte: new Date() } } })
 
