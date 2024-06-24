@@ -69,8 +69,6 @@ export const Controller = {
           statusCode: 401,
         })
 
-      console.log(token)
-
       const authorized = verifyToken(token)
       if (!authorized)
         return res.status(401).json({

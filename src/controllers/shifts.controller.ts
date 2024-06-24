@@ -105,8 +105,6 @@ export const Controller = {
 
       const { id } = decodeToken(token) as JwtPayload
 
-      console.log(id)
-
       return res.status(200).json(await getAllNextShiftsByUserId(id))
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
