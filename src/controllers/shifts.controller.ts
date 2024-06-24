@@ -143,7 +143,7 @@ export const Controller = {
           statusCode: 404,
         })
 
-      if (!(await workhourIsEnabled(workhour.id, weekday.id)))
+      if (!(await workhourIsEnabled(weekday.id, workhour.id)))
         return res.status(404).json({
           message: `El horario ${workhour.hours}:${workhour.minutes} no está habilitado en el día ${weekday.name}.`,
           name: "Not Found",

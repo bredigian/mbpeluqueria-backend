@@ -6,16 +6,9 @@ export const getAll = async () =>
     select: { id: true, weekday: true, workhour: true },
   })
 
-// export const getAllEnabledAndAvailable = async () => {
-//   const enabledWorkhoursByWeekdays = await getAll()
-//   for (const day of enabledWorkhoursByWeekdays) {
-
-//   }
-// }
-
 export const workhourIsEnabled = async (
-  workhourId: string,
-  weekdayId: string
+  weekdayId: string,
+  workhourId: string
 ) =>
   await prisma.workhoursByWeekday.findFirst({
     where: { weekday_id: weekdayId, workhour_id: workhourId },
@@ -24,4 +17,7 @@ export const workhourIsEnabled = async (
 export const enableWorkhour = async (payload: WorkhoursByWeekday) =>
   await prisma.workhoursByWeekday.create({ data: payload })
 
-// export const disableWorkhour = async (id)
+export const disableWorkhour = async (weekdayId: string, workhourId: string) =>
+  await prisma.workhoursByWeekday.deleteMany({
+    where: { weekday_id: weekdayId, workhour_id: workhourId },
+  })

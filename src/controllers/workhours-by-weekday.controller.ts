@@ -1,18 +1,29 @@
 import { Request, Response } from "express"
 import {
+  disableWorkhour,
   enableWorkhour,
   getAll,
+  workhourIsEnabled,
 } from "../services/workhours-by-weekdays.service"
 
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 import { WorkhoursByWeekday } from "@prisma/client"
 
 export const Controller = {
-  enableWorkhour: async (req: Request, res: Response) => {
+  handleWorkhour: async (req: Request, res: Response) => {
     try {
       const payload: WorkhoursByWeekday = req.body
 
-      return res.status(201).json(await enableWorkhour(payload))
+      const isEnabled = await workhourIsEnabled(
+        payload.weekday_id,
+        payload.workhour_id
+      )
+
+      if (!isEnabled) return res.status(201).json(await enableWorkhour(payload))
+
+      return res
+        .status(200)
+        .json(await disableWorkhour(payload.weekday_id, payload.workhour_id))
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         return res.status(500).json({
