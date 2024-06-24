@@ -39,4 +39,7 @@ export const isAssigned = async (timestamp: Date) => {
 }
 
 export const getAllByUserId = async (user_id: string) =>
-  await prisma.shift.findMany({ where: { user_id } })
+  await prisma.shift.findMany({
+    where: { user_id },
+    orderBy: { timestamp: "desc" },
+  })
