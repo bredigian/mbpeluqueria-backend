@@ -3,6 +3,7 @@ import {
   create,
   getAll,
   getAllByUserId,
+  getAllNextShifts,
   isAssigned,
 } from "../services/shifts.service"
 import { decodeToken, verifyToken } from "../services/auth.service"
@@ -49,6 +50,19 @@ export const Controller = {
       const { id } = decodeToken(token) as JwtPayload
 
       return res.status(200).json(await getAllByUserId(id))
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        return res.status(500).json({
+          name: error.name,
+          message: error.message,
+          errorCode: error.code,
+        })
+      }
+    }
+  },
+  getAllNextShifts: async (_: Request, res: Response) => {
+    try {
+      return res.status(200).json(await getAllNextShifts())
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         return res.status(500).json({
