@@ -4,6 +4,7 @@ import {
   getAll,
   getAllByUserId,
   getAllNextShifts,
+  getAllNextShiftsByUserId,
   isAssigned,
 } from "../services/shifts.service"
 import { decodeToken, verifyToken } from "../services/auth.service"
@@ -71,6 +72,40 @@ export const Controller = {
           errorCode: error.code,
         })
       }
+    }
+  },
+  getAllNextShiftsByUserId: async (req: Request, res: Response) => {
+    try {
+      const token = req.headers.authorization?.substring(7)
+      if (!token)
+        return res.status(401).json({
+          message: "El token es inválido o ya caducó.",
+          name: "Unauthorized",
+          statusCode: 401,
+        })
+
+      const authorized = verifyToken(token)
+      if (!authorized)
+        return res.status(401).json({
+          message: "El token es inválido o ya caducó.",
+          name: "Unauthorized",
+          statusCode: 401,
+        })
+
+      const { id } = decodeToken(token) as JwtPayload
+
+      console.log(id)
+
+      return res.status(200).json(await getAllNextShiftsByUserId(id))
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        return res.status(500).json({
+          name: error.name,
+          message: error.message,
+          errorCode: error.code,
+        })
+      }
+      return res.status(500).json({ message: "Internal Server Error" })
     }
   },
   create: async (req: Request, res: Response) => {
