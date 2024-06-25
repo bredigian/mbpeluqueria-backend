@@ -2,6 +2,7 @@ import { $connect, $disconnect } from "./services/prisma.service"
 
 import AuthRoute from "./routes/auth.routes"
 import Express from "express"
+import NoticesRoute from "./routes/notices.routes"
 // Routes
 import ShiftsRoute from "./routes/shifts.routes"
 import UsersRoute from "./routes/users.routes"
@@ -30,6 +31,7 @@ app.use("/shifts", ShiftsRoute)
 app.use("/weekdays", WeekdaysRoute)
 app.use("/workhours", WorkhoursRoute)
 app.use("/workhours-by-weekday", WorkhoursByWeekdayRoute)
+app.use("/notices", NoticesRoute)
 app.use("/auth", AuthRoute)
 
 process.on("SIGINT", async () => {
