@@ -38,7 +38,6 @@ export const Controller = {
   deleteOne: async (req: Request, res: Response) => {
     try {
       const { id } = req.query
-      console.log(id)
       if (!id)
         return res.status(403).json({
           message: "El ID es requerido.",
