@@ -6,7 +6,10 @@ type Props = {
   minutes: number
 }
 
-export const getAll = async () => await prisma.workhour.findMany()
+export const getAll = async () =>
+  await prisma.workhour.findMany({
+    orderBy: [{ hours: "asc" }, { minutes: "asc" }],
+  })
 
 export const getOne = async ({ hours, minutes }: Props) =>
   await prisma.workhour.findFirst({ where: { hours, minutes } })
