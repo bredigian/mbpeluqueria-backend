@@ -20,13 +20,13 @@ enum ERole {
 }
 
 model User {
-  id       String  @unique @default(cuid())
-  name     String
-  email    String
-  username String
-  password String
-  role     ERole
-  Shift    Shift[]
+  id           String  @unique @default(cuid())
+  name         String
+  email        String  @unique
+  phone_number String  @unique
+  password     String
+  role         ERole
+  Shift        Shift[]
 }
 
 model Shift {

@@ -13,7 +13,7 @@ export const Controller = {
     try {
       const payload: User = req.body
 
-      const user = await getOne(payload.username)
+      const user = await getOne(payload.email, payload.phone_number)
       if (!user)
         return res.status(404).json({
           message: "El usuario no existe.",
@@ -33,7 +33,7 @@ export const Controller = {
         {
           id: user.id,
           name: user.name,
-          username: user.username,
+          phone_number: user.phone_number,
           email: user.email,
           role: user.role,
         },
@@ -46,7 +46,7 @@ export const Controller = {
         exp: 30,
         id: user.id,
         name: user.name,
-        username: user.username,
+        phone_number: user.phone_number,
         role: user.role,
       })
     } catch (error) {
@@ -77,14 +77,15 @@ export const Controller = {
           statusCode: 401,
         })
 
-      const { id, name, username, role } = decodeToken(token) as {
+      const { id, name, email, phone_number, role } = decodeToken(token) as {
         id: string
         name: string
-        username: string
+        email: string
+        phone_number: string
         role: string
       }
 
-      const user = await getOne(username)
+      const user = await getOne(email, phone_number)
       if (!user)
         return res.status(404).json({
           message: "El usuario no existe.",
@@ -96,7 +97,8 @@ export const Controller = {
         access_token: token,
         id,
         name,
-        username,
+        email,
+        phone_number,
         role,
       })
     } catch (error) {
