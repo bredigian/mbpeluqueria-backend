@@ -16,7 +16,7 @@ export const Controller = {
       const user = await getOne(payload.username)
       if (!user)
         return res.status(404).json({
-          message: "El usuario no existe",
+          message: "El usuario no existe.",
           name: "Not Found",
           statusCode: 404,
         })
@@ -24,7 +24,7 @@ export const Controller = {
       const match = await verifyPassword(payload.password, user.password)
       if (!match)
         return res.status(401).json({
-          message: "Usuario y/o contraseña inválidos",
+          message: "Usuario y/o contraseña inválidos.",
           name: "Unauthorized",
           statusCode: 401,
         })
@@ -59,7 +59,7 @@ export const Controller = {
       }
     }
   },
-  verify: (req: Request, res: Response) => {
+  verify: async (req: Request, res: Response) => {
     try {
       const token = req.headers.authorization?.substring(7)
       if (!token)
@@ -83,6 +83,14 @@ export const Controller = {
         username: string
         role: string
       }
+
+      const user = await getOne(username)
+      if (!user)
+        return res.status(404).json({
+          message: "El usuario no existe.",
+          name: "Not Found",
+          statusCode: 404,
+        })
 
       return res.status(200).json({
         access_token: token,
