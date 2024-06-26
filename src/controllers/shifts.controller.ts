@@ -122,6 +122,14 @@ export const Controller = {
       const payload: Shift = req.body
       const { timestamp } = payload
       const date = new Date(timestamp)
+      const today = new Date()
+
+      if (date.getTime() < today.getTime())
+        return res.status(409).json({
+          message: "No es posible reservar un turno que ya pasó.",
+          name: "Conflict",
+          statusCode: 409,
+        })
 
       const weekday = await getOne(date.getDay())
 
