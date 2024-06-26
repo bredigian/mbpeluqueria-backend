@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import { create, deleteById, getAll } from "../services/users.service"
 
+import { EPrismaError } from "../types/prisma.types"
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 import { User } from "@prisma/client"
 
@@ -13,7 +14,7 @@ export const Controller = {
         return res.status(500).json({
           name: error.name,
           message: error.message,
-          errorCode: error.code,
+          statusCode: error.code,
         })
       }
       return res.status(500).json({ message: "Internal Server Error" })
@@ -26,10 +27,17 @@ export const Controller = {
       return res.status(201).json(await create(payload))
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === EPrismaError.UniqueConstraint)
+          return res.status(409).json({
+            message: "El usuario ya existe.",
+            name: "Conflict",
+            statusCode: 409,
+          })
+
         return res.status(500).json({
-          name: error.name,
           message: error.message,
-          errorCode: error.code,
+          name: error.name,
+          statusCode: error.code,
         })
       }
       return res.status(500).json({ message: "Internal Server Error" })
@@ -46,7 +54,7 @@ export const Controller = {
         return res.status(500).json({
           name: error.name,
           message: error.message,
-          errorCode: error.code,
+          statusCode: error.code,
         })
       }
       return res.status(500).json({ message: "Internal Server Error" })

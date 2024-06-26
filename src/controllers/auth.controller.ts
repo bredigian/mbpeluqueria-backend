@@ -54,7 +54,7 @@ export const Controller = {
         return res.status(500).json({
           name: error.name,
           message: error.message,
-          errorCode: error.code,
+          statusCode: error.code,
         })
       }
     }
