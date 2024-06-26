@@ -1,14 +1,59 @@
 import { Request, Response } from "express"
+import { create, getOne } from "../services/users.service"
 import { decodeToken, verifyToken } from "../services/auth.service"
 
+import { EPrismaError } from "../types/prisma.types"
 import { JWT_SECRET_KEY } from "../const/jsonwebtoken"
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 import { User } from "@prisma/client"
-import { getOne } from "../services/users.service"
 import { sign } from "jsonwebtoken"
 import { verifyPassword } from "../lib/utils"
 
 export const Controller = {
+  signup: async (req: Request, res: Response) => {
+    try {
+      const payload: User = req.body
+
+      const user = await create(payload)
+
+      const access_token = sign(
+        {
+          id: user.id,
+          name: user.name,
+          phone_number: user.phone_number,
+          email: user.email,
+          role: user.role,
+        },
+        JWT_SECRET_KEY as string,
+        { expiresIn: "30d" }
+      )
+
+      return res.status(201).json({
+        access_token,
+        exp: 30,
+        id: user.id,
+        name: user.name,
+        phone_number: user.phone_number,
+        role: user.role,
+      })
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === EPrismaError.UniqueConstraint)
+          return res.status(409).json({
+            message: "El usuario ya existe.",
+            name: "Conflict",
+            statusCode: 409,
+          })
+
+        return res.status(500).json({
+          message: error.message,
+          name: error.name,
+          statusCode: error.code,
+        })
+      }
+      return res.status(500).json({ message: "Internal Server Error" })
+    }
+  },
   signin: async (req: Request, res: Response) => {
     try {
       const payload: User = req.body
