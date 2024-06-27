@@ -1,12 +1,13 @@
 {
-  "name": "express_typescript-backend",
+  "name": "mbpeluqueria-backend-v2",
   "version": "1.0.0",
-  "description": "Express.js + TypeScript Package",
+  "description": "MB Peluquería's Backend",
   "main": "src/index.ts",
   "scripts": {
     "start": "ts-node src/index.ts",
     "build": "tsc",
-    "dev": "pnpm exec nodemon ./src/index.ts"
+    "dev": "pnpm exec nodemon ./src/index.ts",
+    "vercel-build": "prisma generate && echo Running vercel deploy after Prisma generate"
   },
   "keywords": [],
   "author": {
