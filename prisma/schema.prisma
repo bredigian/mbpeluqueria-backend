@@ -26,6 +26,7 @@ model User {
   phone_number String  @unique
   password     String
   role         ERole
+  token        String?
   Shift        Shift[]
 }
 

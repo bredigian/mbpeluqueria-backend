@@ -1,12 +1,18 @@
+import { JsonWebTokenError, sign } from "jsonwebtoken"
 import { Request, Response } from "express"
-import { create, getOne } from "../services/users.service"
+import {
+  create,
+  getOneByEmail,
+  getOneByPhoneNumber,
+  setTokenById,
+} from "../services/users.service"
 import { decodeToken, verifyToken } from "../services/auth.service"
 
 import { EPrismaError } from "../types/prisma.types"
 import { JWT_SECRET_KEY } from "../const/jsonwebtoken"
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 import { User } from "@prisma/client"
-import { sign } from "jsonwebtoken"
+import { sendRecoverPasswordLink } from "../services/nodemailer.service"
 import { verifyPassword } from "../lib/utils"
 
 export const Controller = {
@@ -58,7 +64,7 @@ export const Controller = {
     try {
       const payload: User = req.body
 
-      const user = await getOne(payload.email, payload.phone_number)
+      const user = await getOneByPhoneNumber(payload.phone_number)
       if (!user)
         return res.status(404).json({
           message: "El usuario no existe.",
@@ -109,7 +115,7 @@ export const Controller = {
       const token = req.headers.authorization?.substring(7)
       if (!token)
         return res.status(401).json({
-          message: "El token es requerido",
+          message: "El token es requerido.",
           name: "Unauthorized",
           statusCode: 401,
         })
@@ -117,7 +123,7 @@ export const Controller = {
       const authorized = verifyToken(token)
       if (!authorized)
         return res.status(401).json({
-          message: "El token es requerido",
+          message: "El token no es válido.",
           name: "Unauthorized",
           statusCode: 401,
         })
@@ -130,13 +136,22 @@ export const Controller = {
         role: string
       }
 
-      const user = await getOne(email, phone_number)
+      const user = await getOneByEmail(email)
       if (!user)
         return res.status(404).json({
           message: "El usuario no existe.",
           name: "Not Found",
           statusCode: 404,
         })
+
+      const url = req.headers.referer
+      if (url?.includes("/auth/recover"))
+        if (!user.token)
+          return res.status(401).json({
+            message: "El token no es válido o ya caducó.",
+            name: "Unauthorized",
+            statusCode: 401,
+          })
 
       return res.status(200).json({
         access_token: token,
@@ -147,8 +162,61 @@ export const Controller = {
         role,
       })
     } catch (error) {
+      if (error instanceof JsonWebTokenError)
+        return res.status(401).json({
+          message: "El token no es válido o ya expiró.",
+          name: "Unauthorized",
+          statusCode: 401,
+        })
+
       return res.status(400).json({
-        message: "Ocurrió un error al verificar el token",
+        message: "Ocurrió un error al verificar el token.",
+        name: "Bad Request",
+        statusCode: 400,
+      })
+    }
+  },
+  recover: async (req: Request, res: Response) => {
+    try {
+      const payload: { email: string } = req.body
+      const url = req.headers.referer
+
+      const user = await getOneByEmail(payload.email)
+      if (!user)
+        return res.status(404).json({
+          message: "El email ingresado no está asociado a ningún usuario.",
+          name: "Not Found",
+          statusCode: 404,
+        })
+
+      const EXPIRATION_TOKEN = 900
+
+      const access_token = sign(
+        {
+          id: user.id,
+          name: user.name,
+          phone_number: user.phone_number,
+          email: user.email,
+          role: user.role,
+        },
+        JWT_SECRET_KEY as string,
+        { expiresIn: EXPIRATION_TOKEN }
+      )
+
+      await setTokenById(user.id, access_token)
+
+      return res
+        .status(201)
+        .json(
+          await sendRecoverPasswordLink(
+            url as string,
+            payload.email,
+            access_token
+          )
+        )
+    } catch (error) {
+      return res.status(400).json({
+        message: "Ocurrió un error al enviar el email.",
         name: "Bad Request",
         statusCode: 400,
       })
