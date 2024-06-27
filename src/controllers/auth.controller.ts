@@ -144,14 +144,15 @@ export const Controller = {
           statusCode: 404,
         })
 
-      const url = req.headers.referer
-      if (url?.includes("/auth/recover"))
+      const { isPassRecover } = req.query
+      if (isPassRecover) {
         if (!user.token)
           return res.status(401).json({
             message: "El token no es válido o ya caducó.",
             name: "Unauthorized",
             statusCode: 401,
           })
+      }
 
       return res.status(200).json({
         access_token: token,
