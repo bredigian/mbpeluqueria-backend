@@ -6,11 +6,11 @@ import {
   getOneByEmail,
   update,
 } from "../services/users.service"
-import { decodeToken, verifyToken } from "../services/auth.service"
 
 import { EPrismaError } from "../types/prisma.types"
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 import { User } from "@prisma/client"
+import { decodeToken } from "../services/auth.service"
 
 export const Controller = {
   getAll: async (_: Request, res: Response) => {
@@ -53,22 +53,7 @@ export const Controller = {
   update: async (req: Request, res: Response) => {
     try {
       const token = req.headers.authorization?.substring(7)
-      if (!token)
-        return res.status(401).json({
-          message: "El token es requerido.",
-          name: "Unauthorized",
-          statusCode: 401,
-        })
-
-      const authorized = verifyToken(token)
-      if (!authorized)
-        return res.status(401).json({
-          message: "El token no es válido.",
-          name: "Unauthorized",
-          statusCode: 401,
-        })
-
-      const { email } = decodeToken(token) as {
+      const { email } = decodeToken(token as string) as {
         id: string
         name: string
         email: string

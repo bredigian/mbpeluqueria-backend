@@ -173,10 +173,10 @@ export const Controller = {
           statusCode: 401,
         })
 
-      return res.status(400).json({
+      return res.status(500).json({
         message: "Ocurrió un error al verificar el token.",
-        name: "Bad Request",
-        statusCode: 400,
+        name: "Internal Server Error",
+        statusCode: 500,
       })
     }
   },
