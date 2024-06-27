@@ -120,10 +120,14 @@ export const Controller = {
           statusCode: 401,
         })
 
+      const { isPassRecover } = req.query
+
       const authorized = verifyToken(token)
       if (!authorized)
         return res.status(401).json({
-          message: "El token no es válido.",
+          message: !isPassRecover
+            ? "El token no es válido o ya caducó."
+            : "El link no es válido o ya caducó.",
           name: "Unauthorized",
           statusCode: 401,
         })
@@ -144,11 +148,10 @@ export const Controller = {
           statusCode: 404,
         })
 
-      const { isPassRecover } = req.query
       if (isPassRecover) {
         if (!user.token)
           return res.status(401).json({
-            message: "El token no es válido o ya caducó.",
+            message: "El link no es válido o ya caducó.",
             name: "Unauthorized",
             statusCode: 401,
           })
