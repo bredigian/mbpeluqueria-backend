@@ -146,6 +146,7 @@ export const Controller = {
         date
           .toLocaleTimeString("es-AR", {
             timeZone: "America/Argentina/Buenos_Aires",
+            hour12: false,
           })
           .split(":")[0]
       )
@@ -153,6 +154,7 @@ export const Controller = {
         date
           .toLocaleTimeString("es-AR", {
             timeZone: "America/Argentina/Buenos_Aires",
+            hour12: false,
           })
           .split(":")[1]
       )
