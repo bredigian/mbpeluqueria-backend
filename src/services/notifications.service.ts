@@ -6,6 +6,7 @@ export const getAll = async () =>
     select: {
       id: true,
       timestamp: true,
+      shiftTimestamp: true,
       description: true,
       shift: {
         select: {

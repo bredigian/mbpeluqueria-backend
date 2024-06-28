@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import {
   create,
+  deleteById,
   getAll,
   getAllByUserId,
   getAllNextShifts,
@@ -169,10 +170,40 @@ export const Controller = {
       const reserved = await create(payload)
       await createNotification({
         shift_id: reserved.id,
+        shiftTimestamp: reserved.timestamp,
         userId: reserved.user.id,
         description: "¡Turno reservado!",
       })
       return res.status(201).json(reserved)
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        return res.status(500).json({
+          name: error.name,
+          message: error.message,
+          statusCode: error.code,
+        })
+      }
+      return res.status(500).json({ message: "Internal Server Error" })
+    }
+  },
+
+  deleteById: async (req: Request, res: Response) => {
+    try {
+      const { id } = req.query
+      if (!id)
+        return res.status(403).json({
+          message: "El ID del turno es requerido.",
+          name: "Forbidden",
+          statusCode: 403,
+        })
+
+      const cancelled = await deleteById(id as string)
+      await createNotification({
+        shiftTimestamp: cancelled.timestamp,
+        userId: cancelled.user.id,
+        description: "¡Turno cancelado!",
+      })
+      return res.status(200).json(cancelled)
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         return res.status(500).json({

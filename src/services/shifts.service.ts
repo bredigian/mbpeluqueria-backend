@@ -73,3 +73,13 @@ export const getAllByUserId = async (user_id: string) =>
     where: { user_id },
     orderBy: { timestamp: "desc" },
   })
+
+export const deleteById = async (id: string) =>
+  await prisma.shift.delete({
+    where: { id },
+    select: {
+      id: true,
+      timestamp: true,
+      user: { select: { id: true, name: true } },
+    },
+  })

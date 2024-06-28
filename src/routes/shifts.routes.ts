@@ -9,5 +9,6 @@ router.get("/next", authGuard, Controller.getAllNextShifts)
 router.get("/user", authGuard, Controller.getAllByUserId)
 router.get("/next/user", authGuard, Controller.getAllNextShiftsByUserId)
 router.post("/", authGuard, Controller.create)
+router.delete("/", authGuard, Controller.deleteById)
 
 export default router
