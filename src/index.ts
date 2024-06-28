@@ -27,7 +27,7 @@ app.use(Express.json())
 $connect()
 
 app.get("/", (_, res) => {
-  res.json({ message: "Express.js + TypeScript Backend" })
+  res.json({ message: "MB Peluquería's API", timestamp: new Date() })
 })
 
 app.use("/users", UsersRoute)
