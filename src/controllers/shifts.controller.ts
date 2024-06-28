@@ -142,20 +142,42 @@ export const Controller = {
           statusCode: 404,
         })
 
+      const hours = Number(
+        date
+          .toLocaleTimeString("es-AR", {
+            timeZone: "America/Argentina/Buenos_Aires",
+          })
+          .split(":")[0]
+      )
+      const minutes = Number(
+        date
+          .toLocaleTimeString("es-AR", {
+            timeZone: "America/Argentina/Buenos_Aires",
+          })
+          .split(":")[1]
+      )
       const workhour = await getOneWorkhour({
-        hours: date.getHours(),
-        minutes: date.getMinutes(),
+        hours,
+        minutes,
       })
       if (!workhour)
         return res.status(404).json({
-          message: `El horario de trabajo ${date.getHours()}:${date.getMinutes()} no está registrado en el sistema.`,
+          message: `El horario de trabajo ${hours
+            .toString()
+            .padStart(2, "0")}:${minutes
+            .toString()
+            .padStart(2, "0")} no está registrado en el sistema.`,
           name: "Not Found",
           statusCode: 404,
         })
 
       if (!(await workhourIsEnabled(weekday.id, workhour.id)))
         return res.status(404).json({
-          message: `El horario ${workhour.hours}:${workhour.minutes} no está habilitado en el día ${weekday.name}.`,
+          message: `El horario ${workhour.hours
+            .toString()
+            .padStart(2, "0")}:${workhour.minutes
+            .toString()
+            .padStart(2, "0")} no está habilitado en el día ${weekday.name}.`,
           name: "Not Found",
           statusCode: 404,
         })
