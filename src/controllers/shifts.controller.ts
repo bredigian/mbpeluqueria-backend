@@ -13,6 +13,7 @@ import { decodeToken, verifyToken } from "../services/auth.service"
 import { JwtPayload } from "jsonwebtoken"
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 import { Shift } from "@prisma/client"
+import { create as createNotification } from "../services/notifications.service"
 import { getOne } from "../services/weekdays.service"
 import { getOne as getOneWorkhour } from "../services/workhours.service"
 import { workhourIsEnabled } from "../services/workhours-by-weekdays.service"
@@ -165,7 +166,13 @@ export const Controller = {
           statusCode: 409,
         })
 
-      return res.status(201).json(await create(payload))
+      const reserved = await create(payload)
+      await createNotification({
+        shift_id: reserved.id,
+        userId: reserved.user.id,
+        description: "¡Turno reservado!",
+      })
+      return res.status(201).json(reserved)
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         return res.status(500).json({
