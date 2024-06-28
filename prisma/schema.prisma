@@ -71,6 +71,7 @@ model Notification {
   id          String   @id @unique @default(cuid())
   timestamp   DateTime @default(now())
   description String
+  readed      Boolean  @default(false)
   user_id     String
   user        User     @relation(fields: [user_id], references: [id])
 }
