@@ -9,8 +9,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
@@ -20,14 +20,15 @@ enum ERole {
 }
 
 model User {
-  id           String  @id @unique @default(cuid())
+  id           String         @id @unique @default(cuid())
   name         String
-  email        String  @unique
-  phone_number String  @unique
+  email        String         @unique
+  phone_number String         @unique
   password     String
   role         ERole
   token        String?
   Shift        Shift[]
+  Notification Notification[]
 }
 
 model Shift {
@@ -38,7 +39,7 @@ model Shift {
 }
 
 model Weekday {
-  id                 String   @id @unique @default(cuid())
+  id                 String               @id @unique @default(cuid())
   name               String
   number             Int
   WorkhoursByWeekday WorkhoursByWeekday[]
@@ -52,7 +53,7 @@ model Workhour {
 }
 
 model WorkhoursByWeekday {
-  id          String @unique @id @default(cuid())
+  id          String @id @unique @default(cuid())
   weekday_id  String
   workhour_id String
 
@@ -61,7 +62,15 @@ model WorkhoursByWeekday {
 }
 
 model Notice {
-  id          String @unique @id @default(cuid())
+  id          String   @id @unique @default(cuid())
   timestamp   DateTime @default(now())
   description String
+}
+
+model Notification {
+  id          String   @id @unique @default(cuid())
+  timestamp   DateTime @default(now())
+  description String
+  user_id     String
+  user        User     @relation(fields: [user_id], references: [id])
 }
