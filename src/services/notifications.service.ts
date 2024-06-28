@@ -24,5 +24,4 @@ export const create = async (payload: TNotificationToCreate) =>
 export const update = async (id: string) =>
   await prisma.notification.update({ where: { id }, data: { readed: true } })
 
-export const deleteById = async (id: string) =>
-  await prisma.notification.delete({ where: { id } })
+export const deleteAll = async () => await prisma.notification.deleteMany()

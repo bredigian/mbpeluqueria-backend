@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import {
   create,
-  deleteById,
+  deleteAll,
   getAll,
   update,
 } from "../services/notifications.service"
@@ -63,17 +63,9 @@ export const Controller = {
     }
   },
 
-  deleteById: async (req: Request, res: Response) => {
+  deleteAll: async (_: Request, res: Response) => {
     try {
-      const { id } = req.query
-      if (!id)
-        return res.status(403).json({
-          message: "El ID de la notificación es requerido.",
-          name: "Forbidden",
-          statusCode: 403,
-        })
-
-      return res.status(200).json(await deleteById(id as string))
+      return res.status(200).json(await deleteAll())
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         return res.status(500).json({

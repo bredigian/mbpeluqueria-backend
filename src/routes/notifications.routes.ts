@@ -7,6 +7,6 @@ const router = Router()
 router.get("/", authGuard, Controller.getAll)
 router.post("/", authGuard, Controller.create)
 router.patch("/", authGuard, Controller.update)
-router.delete("/", authGuard, Controller.deleteById)
+router.delete("/", authGuard, Controller.deleteAll)
 
 export default router
