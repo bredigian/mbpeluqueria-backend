@@ -4,8 +4,6 @@ import AuthRoute from "./routes/auth.routes"
 import Express from "express"
 import NoticesRoute from "./routes/notices.routes"
 import NotificationsRoute from "./routes/notifications.routes"
-import { Server } from "socket.io"
-import { Shift } from "@prisma/client"
 // Routes
 import ShiftsRoute from "./routes/shifts.routes"
 import UsersRoute from "./routes/users.routes"
@@ -15,7 +13,6 @@ import WorkhoursRoute from "./routes/workhours.routes"
 //-----------------------------
 import { config } from "dotenv"
 import cors from "cors"
-import { createServer } from "node:http"
 
 config()
 
@@ -44,31 +41,7 @@ process.on("SIGINT", async () => {
   process.exit(0)
 })
 
-const socketServer = createServer(app)
-const io = new Server(socketServer, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
-  },
-})
-
-io.on("connection", (socket) => {
-  console.log(`${socket.handshake.query.user} is connected.`)
-
-  socket.on("reserve-shift", async (data: Shift) =>
-    socket.broadcast.emit("reserve-shift", data)
-  )
-
-  socket.on("cancel-shift", async (data: Shift) =>
-    socket.broadcast.emit("cancel-shift", data)
-  )
-
-  socket.on("disconnect", () =>
-    console.log(`${socket.handshake.query.user} is disconnected.`)
-  )
-})
-
 const PORT = process.env.PORT ?? 3000
-socketServer.listen(PORT, () => console.log(`Server running at PORT ${PORT}`))
+app.listen(PORT, () => console.log(`Server running at PORT ${PORT}`))
 
 export default app
