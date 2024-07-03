@@ -17,6 +17,9 @@ export const getAll = async () =>
         },
       },
     },
+    orderBy: {
+      timestamp: "asc",
+    },
   })
 
 export const getOfSpecificDate = async (specificDate: Date, nextDate: Date) =>
@@ -35,6 +38,9 @@ export const getOfSpecificDate = async (specificDate: Date, nextDate: Date) =>
           role: true,
         },
       },
+    },
+    orderBy: {
+      timestamp: "asc",
     },
   })
 
