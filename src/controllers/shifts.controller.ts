@@ -11,6 +11,7 @@ import {
 } from "../services/shifts.service"
 import { decodeToken, verifyToken } from "../services/auth.service"
 
+import { DateTime } from "luxon"
 import { JwtPayload } from "jsonwebtoken"
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 import { Shift } from "@prisma/client"
@@ -25,9 +26,8 @@ export const Controller = {
       const { date } = req.query
       if (!date) return res.status(200).json(await getAll())
 
-      const specificDate = new Date(date as string)
-      const nextDate = new Date(specificDate)
-      nextDate.setDate(specificDate.getDate() + 1)
+      const specificDate = DateTime.fromISO(date as string)
+      const nextDate = DateTime.fromISO(date as string).plus({ days: 1 })
 
       return res
         .status(200)
@@ -123,50 +123,38 @@ export const Controller = {
     try {
       const payload: Shift = req.body
       const { timestamp } = payload
-      const date = new Date(timestamp)
-      const today = new Date()
+      const date = DateTime.fromISO(timestamp as unknown as string)
+        .setZone("America/Argentina/Buenos_Aires")
+        .setLocale("es-AR")
+      const today = DateTime.now()
+        .setZone("America/Argentina/Buenos_Aires")
+        .setLocale("es-AR")
 
-      if (date.getTime() < today.getTime())
+      if (date.toMillis() < today.toMillis())
         return res.status(409).json({
           message: "No es posible reservar un turno que ya pasó.",
           name: "Conflict",
           statusCode: 409,
         })
 
-      const weekday = await getOne(date.getDay())
+      const weekday = await getOne(date.weekday)
 
       if (!weekday)
         return res.status(404).json({
-          message: `El día semanal ${date.getDay()} no está registrado en el sistema.`,
+          message: `El día semanal ${date.weekday} no está registrado en el sistema.`,
           name: "Not Found",
           statusCode: 404,
         })
 
-      const hours = Number(
-        date
-          .toLocaleTimeString("es-AR", {
-            timeZone: "America/Argentina/Buenos_Aires",
-            hour12: false,
-          })
-          .split(":")[0]
-      )
-      const minutes = Number(
-        date
-          .toLocaleTimeString("es-AR", {
-            timeZone: "America/Argentina/Buenos_Aires",
-            hour12: false,
-          })
-          .split(":")[1]
-      )
       const workhour = await getOneWorkhour({
-        hours,
-        minutes,
+        hours: date.hour,
+        minutes: date.minute,
       })
       if (!workhour)
         return res.status(404).json({
-          message: `El horario de trabajo ${hours
+          message: `El horario de trabajo ${date.hour
             .toString()
-            .padStart(2, "0")}:${minutes
+            .padStart(2, "0")}:${date.minute
             .toString()
             .padStart(2, "0")} no está registrado en el sistema.`,
           name: "Not Found",
