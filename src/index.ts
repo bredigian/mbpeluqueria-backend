@@ -1,6 +1,7 @@
 import { $connect, $disconnect } from "./services/prisma.service"
 
 import AuthRoute from "./routes/auth.routes"
+import { DateTime } from "luxon"
 import Express from "express"
 import NoticesRoute from "./routes/notices.routes"
 import NotificationsRoute from "./routes/notifications.routes"
@@ -24,7 +25,10 @@ app.use(Express.json())
 $connect()
 
 app.get("/", (_, res) => {
-  res.json({ message: "MB Peluquería's API", timestamp: new Date() })
+  res.json({
+    message: "MB Peluquería's API",
+    timestamp: DateTime.now().toISO(),
+  })
 })
 
 app.use("/users", UsersRoute)
@@ -42,6 +46,8 @@ process.on("SIGINT", async () => {
 })
 
 const PORT = process.env.PORT ?? 3000
-app.listen(PORT, () => console.log(`Server running at PORT ${PORT}`))
+app.listen(PORT, () =>
+  console.log(`Server running at PORT ${PORT} at ${DateTime.now().toHTTP()}`)
+)
 
 export default app

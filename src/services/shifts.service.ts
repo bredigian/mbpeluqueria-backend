@@ -1,3 +1,4 @@
+import { DateTime } from "luxon"
 import { Shift } from "@prisma/client"
 import { prisma } from "./prisma.service"
 
@@ -22,9 +23,17 @@ export const getAll = async () =>
     },
   })
 
-export const getOfSpecificDate = async (specificDate: Date, nextDate: Date) =>
+export const getOfSpecificDate = async (
+  specificDate: DateTime,
+  nextDate: DateTime
+) =>
   await prisma.shift.findMany({
-    where: { timestamp: { gte: specificDate, lt: nextDate } },
+    where: {
+      timestamp: {
+        gte: specificDate.toUTC().toISO() as string,
+        lt: nextDate.toUTC().toISO() as string,
+      },
+    },
     select: {
       id: true,
       timestamp: true,
@@ -45,15 +54,18 @@ export const getOfSpecificDate = async (specificDate: Date, nextDate: Date) =>
   })
 
 export const getAllNextShifts = async () => {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
+  const today = DateTime.now()
+    .toUTC()
+    .set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
 
-  return await prisma.shift.findMany({ where: { timestamp: { gte: today } } })
+  return await prisma.shift.findMany({
+    where: { timestamp: { gte: today.toISO() as string } },
+  })
 }
 
 export const getAllNextShiftsByUserId = async (id: string) =>
   await prisma.shift.findMany({
-    where: { user_id: id, timestamp: { gte: new Date() } },
+    where: { user_id: id, timestamp: { gte: DateTime.now().toUTC().toISO() } },
     orderBy: { timestamp: "asc" },
   })
 
