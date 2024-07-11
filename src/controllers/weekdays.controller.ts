@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import { create, getAll } from "../services/weekdays.service"
 
+import { DateTime } from "luxon"
 import { IWeekdayWithAssignedShifts } from "../types/weekdays.types"
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 import { Weekday } from "@prisma/client"
@@ -29,9 +30,13 @@ export const Controller = {
 
       const weekdaysWithUnavailableWorkhours: IWeekdayWithAssignedShifts[] =
         weekdays.map((weekday) => {
-          const shiftsOfWeekday = unavailableShifts.filter(
-            (shift) => weekday.number === new Date(shift.timestamp).getDay()
-          )
+          const shiftsOfWeekday = unavailableShifts.filter((shift) => {
+            const jsDate = new Date(shift.timestamp)
+            const date = DateTime.fromJSDate(jsDate).setZone(
+              "America/Argentina/Buenos_Aires"
+            )
+            return weekday.number === (date.weekday === 7 ? 0 : date.weekday)
+          })
           return {
             ...weekday,
             assignedWorkhours: shiftsOfWeekday,
