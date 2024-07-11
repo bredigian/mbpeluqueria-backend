@@ -4,6 +4,9 @@ import { prisma } from "./prisma.service"
 export const getAll = async () =>
   await prisma.weekday.findMany({
     include: { WorkhoursByWeekday: { select: { id: true, workhour: true } } },
+    orderBy: {
+      number: "asc",
+    },
   })
 
 export const getOne = async (number: number) =>
