@@ -63,11 +63,14 @@ export const getAllNextShifts = async () => {
   })
 }
 
-export const getAllNextShiftsByUserId = async (id: string) =>
-  await prisma.shift.findMany({
-    where: { user_id: id, timestamp: { gte: DateTime.now().toUTC().toISO() } },
+export const getAllNextShiftsByUserId = async (id: string) => {
+  const today = DateTime.now().toUTC().toISO()
+  console.log(today)
+  return await prisma.shift.findMany({
+    where: { user_id: id, timestamp: { gte: today } },
     orderBy: { timestamp: "asc" },
   })
+}
 
 export const create = async (payload: Shift) =>
   await prisma.shift.create({
