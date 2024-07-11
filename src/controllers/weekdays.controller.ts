@@ -35,7 +35,7 @@ export const Controller = {
             const date = DateTime.fromJSDate(jsDate).setZone(
               "America/Argentina/Buenos_Aires"
             )
-            return weekday.number === date.weekday
+            return weekday.number === (date.weekday === 7 ? 0 : date.weekday)
           })
           return {
             ...weekday,
