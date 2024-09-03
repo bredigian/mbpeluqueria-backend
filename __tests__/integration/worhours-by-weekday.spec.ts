@@ -1,4 +1,5 @@
 import { $connect } from "../../src/services/prisma.service"
+import { AUTHORIZATION_FOR_TESTS } from "../../src/const/tests"
 import App from "../../src/app"
 import TestAgent from "supertest/lib/agent"
 import { WorkhoursByWeekday } from "@prisma/client"
@@ -12,9 +13,6 @@ describe("Workhours by weekday Integration Tests", () => {
     workhour_id: "clxz0ils30007fmlbe2pxmnyk", // 10:00hs
   }
 
-  const AUTHORIZATION =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtMGxteXo5dTAwMDBqNXF3bDd0N2s5cngiLCJuYW1lIjoiTm9tYnJlIEFwZWxsaWRvIiwicGhvbmVfbnVtYmVyIjoiMTIzNDk4NzY1NCIsImVtYWlsIjoidGVzdGluZ0B0ZXN0LmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzI1MzE5OTgzLCJleHAiOjE3Mjc5MTE5ODN9.nJymSjmfZxDHkvsN4qTl7pxdyOoheQ0Xld5h0mNnwco"
-
   let app: TestAgent
   beforeAll(async () => {
     await $connect()
@@ -25,7 +23,7 @@ describe("Workhours by weekday Integration Tests", () => {
   it("should activate workhour and return 201", async () => {
     const response = await app
       .post("/workhours-by-weekday")
-      .set({ authorization: `Bearer ${AUTHORIZATION}` })
+      .set({ authorization: `Bearer ${AUTHORIZATION_FOR_TESTS}` })
       .send(WORKHOUR_TO_HANDLE)
 
     const isEnabled = await workhourIsEnabled(
@@ -42,7 +40,7 @@ describe("Workhours by weekday Integration Tests", () => {
   it("should deactivate workhour and return 200", async () => {
     const response = await app
       .post("/workhours-by-weekday")
-      .set({ authorization: `Bearer ${AUTHORIZATION}` })
+      .set({ authorization: `Bearer ${AUTHORIZATION_FOR_TESTS}` })
       .send(WORKHOUR_TO_HANDLE)
 
     const isEnabled = await workhourIsEnabled(
@@ -63,7 +61,7 @@ describe("Workhours by weekday Integration Tests", () => {
     }
     const response = await app
       .post("/workhours-by-weekday")
-      .set({ authorization: `Bearer ${AUTHORIZATION}` })
+      .set({ authorization: `Bearer ${AUTHORIZATION_FOR_TESTS}` })
       .send(WORKHOUR_TO_HANDLE)
 
     expect(response.status).toBe(500)

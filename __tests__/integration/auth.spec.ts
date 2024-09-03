@@ -18,8 +18,6 @@ describe("Users Integration Tests", () => {
     phone_number: "1234987654",
     role: "USER",
   }
-  const AUTHORIZATION =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtMGxteXo5dTAwMDBqNXF3bDd0N2s5cngiLCJuYW1lIjoiTm9tYnJlIEFwZWxsaWRvIiwicGhvbmVfbnVtYmVyIjoiMTIzNDk4NzY1NCIsImVtYWlsIjoidGVzdGluZ0B0ZXN0LmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzI1MzE5OTgzLCJleHAiOjE3Mjc5MTE5ODN9.nJymSjmfZxDHkvsN4qTl7pxdyOoheQ0Xld5h0mNnwco"
 
   let app: TestAgent
   beforeAll(async () => {
