@@ -14,7 +14,7 @@ import express from "express"
 
 describe("Shifts Integration Tests", () => {
   const PAYLOAD: Partial<Shift> = {
-    timestamp: DateTime.now().set({ hour: 15, minute: 0 }).toUTC().toJSDate(), // Martes 15:00hs
+    timestamp: DateTime.now().set({ hour: 21, minute: 0 }).toUTC().toJSDate(), // Martes 15:00hs
     user_id: "cm0mi29hn0000tbimnzzw8zwo", // Usuario de tests => Nombre Apellido
   }
 
@@ -63,7 +63,7 @@ describe("Shifts Integration Tests", () => {
   it("should fail because workhour is not enabled and return 404", async () => {
     const PAYLOAD_WITH_WORKHOUR_NOT_ENABLED = {
       ...PAYLOAD,
-      timestamp: DateTime.now().set({ hour: 21, minute: 0 }).toUTC(),
+      timestamp: DateTime.now().set({ hour: 15, minute: 0 }).toUTC(),
     }
 
     const response = await app
