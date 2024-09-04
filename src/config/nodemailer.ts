@@ -11,12 +11,4 @@ const transporter = nodemailer.createTransport({
   },
 } as SMTPTransport.Options)
 
-transporter
-  .verify()
-  .then(() => console.log("Transporter is OK!"))
-  .catch((error) => {
-    if (error instanceof Error)
-      console.error("Transporter is NOT READY!\n", error.message)
-  })
-
 export default transporter

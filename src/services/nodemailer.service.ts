@@ -18,5 +18,6 @@ export const sendRecoverPasswordLink = async (
             </div>
         `,
   }
+  await transporter.verify()
   return await transporter.sendMail(options)
 }

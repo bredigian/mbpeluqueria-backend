@@ -219,6 +219,7 @@ export const Controller = {
           )
         )
     } catch (error) {
+      console.error(error)
       return res.status(400).json({
         message: "Ocurrió un error al enviar el email.",
         name: "Bad Request",
