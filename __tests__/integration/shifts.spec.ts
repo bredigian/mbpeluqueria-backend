@@ -3,6 +3,7 @@ import {
   $disconnect,
   prisma,
 } from "../../src/services/prisma.service"
+import request, { Test } from "supertest"
 
 import { AUTHORIZATION_FOR_TESTS } from "../../src/const/tests"
 import App from "../../src/app"
@@ -10,7 +11,6 @@ import { DateTime } from "luxon"
 import { Shift } from "@prisma/client"
 import TestAgent from "supertest/lib/agent"
 import express from "express"
-import request from "supertest"
 
 describe("Shifts Integration Tests", () => {
   const PAYLOAD: Partial<Shift> = {
@@ -18,7 +18,7 @@ describe("Shifts Integration Tests", () => {
     user_id: "cm0mi29hn0000tbimnzzw8zwo", // Usuario de tests => Nombre Apellido
   }
 
-  let app: TestAgent
+  let app: TestAgent<Test>
   beforeAll(async () => {
     await $connect()
     const server = App(express())
