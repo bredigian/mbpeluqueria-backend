@@ -1,12 +1,13 @@
+import { authAdminGuard, authGuard } from "../middleware/auth.middleware"
+
 import { Controller } from "../controllers/notifications.controller"
 import { Router } from "express"
-import { authGuard } from "../middleware/auth.middleware"
 
 const router = Router()
 
 router.get("/", authGuard, Controller.getAll)
-router.post("/", authGuard, Controller.create)
-router.patch("/", authGuard, Controller.update)
-router.delete("/", authGuard, Controller.deleteAll)
+router.post("/", authAdminGuard, Controller.create)
+router.patch("/", authAdminGuard, Controller.update)
+router.delete("/", authAdminGuard, Controller.deleteAll)
 
 export default router

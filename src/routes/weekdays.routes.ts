@@ -1,6 +1,7 @@
+import { authAdminGuard, authGuard } from "../middleware/auth.middleware"
+
 import { Controller } from "../controllers/weekdays.controller"
 import { Router } from "express"
-import { authGuard } from "../middleware/auth.middleware"
 
 const router = Router()
 
@@ -10,6 +11,6 @@ router.get(
   authGuard,
   Controller.getAllWithUnavailableWorkhours
 )
-router.post("/", authGuard, Controller.create)
+router.post("/", authAdminGuard, Controller.create)
 
 export default router
