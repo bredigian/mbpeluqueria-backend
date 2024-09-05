@@ -1,5 +1,5 @@
 import { $connect } from "../../src/services/prisma.service"
-import { AUTHORIZATION_FOR_TESTS } from "../../src/const/tests"
+import { ADMIN_AUTHORIZATION_FOR_TESTS } from "../../src/const/tests"
 import App from "../../src/app"
 import TestAgent from "supertest/lib/agent"
 import { WorkhoursByWeekday } from "@prisma/client"
@@ -23,7 +23,7 @@ describe("Workhours by weekday Integration Tests", () => {
   it("should activate workhour and return 201", async () => {
     const response = await app
       .post("/workhours-by-weekday")
-      .set({ authorization: `Bearer ${AUTHORIZATION_FOR_TESTS}` })
+      .set({ authorization: `Bearer ${ADMIN_AUTHORIZATION_FOR_TESTS}` })
       .send(WORKHOUR_TO_HANDLE)
 
     const isEnabled = await workhourIsEnabled(
@@ -40,7 +40,7 @@ describe("Workhours by weekday Integration Tests", () => {
   it("should deactivate workhour and return 200", async () => {
     const response = await app
       .post("/workhours-by-weekday")
-      .set({ authorization: `Bearer ${AUTHORIZATION_FOR_TESTS}` })
+      .set({ authorization: `Bearer ${ADMIN_AUTHORIZATION_FOR_TESTS}` })
       .send(WORKHOUR_TO_HANDLE)
 
     const isEnabled = await workhourIsEnabled(
@@ -61,7 +61,7 @@ describe("Workhours by weekday Integration Tests", () => {
     }
     const response = await app
       .post("/workhours-by-weekday")
-      .set({ authorization: `Bearer ${AUTHORIZATION_FOR_TESTS}` })
+      .set({ authorization: `Bearer ${ADMIN_AUTHORIZATION_FOR_TESTS}` })
       .send(WORKHOUR_TO_HANDLE)
 
     expect(response.status).toBe(500)
