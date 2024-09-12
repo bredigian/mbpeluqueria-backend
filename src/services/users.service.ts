@@ -5,14 +5,18 @@ import { prisma } from "./prisma.service"
 export const getAll = async () => await prisma.user.findMany()
 
 export const getOneByEmail = async (email: string) =>
-  await prisma.user.findFirst({ where: { email } })
+  await prisma.user.findFirst({
+    where: { email: { mode: "insensitive", equals: email.toLowerCase() } },
+  })
 
 export const getOneByPhoneNumber = async (phone_number: string) =>
   await prisma.user.findFirst({ where: { phone_number } })
 
 export const create = async (payload: User) => {
   const hash = await hashPass(payload.password)
-  return await prisma.user.create({ data: { ...payload, password: hash } })
+  return await prisma.user.create({
+    data: { ...payload, email: payload.email.toLowerCase(), password: hash },
+  })
 }
 
 export const update = async (id: string, password: string) => {
